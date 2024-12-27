@@ -2,9 +2,7 @@ import * as axe from 'axe-core';
 import ptBR from 'axe-core/locales/pt_BR.json';
 
 // Configure axe-core with Portuguese locale
-axe.configure({
-  locale: ptBR, // Use the locale directly
-});
+newFunction();
 
 
 export const performAccessibilityCheck = async (html: string) => {
@@ -20,6 +18,7 @@ export const performAccessibilityCheck = async (html: string) => {
           {
             runOnly: ['wcag2a', 'wcag2aa'], // Focus only on WCAG 2.0 A and AA criteria
             resultTypes: ['violations', 'incomplete', 'inapplicable'], // Include different result types
+            // reporter: 'v2'
           },
           (err, results) => {
             if (err) {
@@ -35,4 +34,11 @@ export const performAccessibilityCheck = async (html: string) => {
       document.body.removeChild(container);
     }
   };
+
+function newFunction() {
+  axe.configure({
+    // @ts-ignore
+    locale: ptBR,
+  });
+}
   
