@@ -24,41 +24,51 @@ export default function App() {
     clearErrors();
     try {
       let content = '';
-
+  
       switch (activeTab) {
         case 'code':
           if (!htmlCode.trim()) throw new Error('Por favor, insira um código HTML válido.');
           content = htmlCode;
           break;
-
+  
         case 'url':
-          if (!url.trim() || !url.match(/^https?:\/\/.+/)) throw new Error('Por favor, insira uma URL válida.');
-          const response = await fetch(url);
-          if (!response.ok) throw new Error('Não foi possível acessar a URL fornecida.');
-          content = await response.text();
+          if (!url.trim() || !url.match(/^https?:\/\/.+/)) {
+            throw new Error('Por favor, insira uma URL válida.');
+          }
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`Erro ao acessar a URL: ${response.statusText}`);
+            }
+            content = await response.text();
+          } catch (err) {
+            throw new Error('Erro ao buscar a URL. Verifique se o servidor permite acesso.');
+          }
           break;
-
+  
         case 'upload':
           if (!file) throw new Error('Por favor, carregue um arquivo válido.');
+          if (!file.type.includes('html') && !file.type.includes('text')) {
+            throw new Error('Arquivo inválido. Apenas arquivos HTML ou de texto são permitidos.');
+          }
           content = await new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
+            reader.onerror = () => reject(new Error('Erro ao ler o arquivo.'));
             reader.readAsText(file);
           });
           break;
-
+  
         default:
           throw new Error('Método de entrada inválido.');
       }
-
-      // Perform Accessibility Check with Portuguese locale
+  
+      // Perform Accessibility Check
       const report = await performAccessibilityCheck(content);
-      
+  
       // Display Report
       setResults(report);
       setIsDialogOpen(true);
-
     } catch (error) {
       setErrorMessages((prev) => ({
         ...prev,
@@ -66,6 +76,7 @@ export default function App() {
       }));
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

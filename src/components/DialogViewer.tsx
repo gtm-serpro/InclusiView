@@ -11,13 +11,16 @@ interface DialogViewerProps {
 export default function DialogViewer({ isOpen, onClose, content }: DialogViewerProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-screen w-[600px] overflow-y-auto rounded-lg bg-white shadow-lg">
+      <DialogContent
+        className="max-h-screen overflow-y-auto rounded-lg bg-white shadow-lg"
+        style={{ width: '80%', maxWidth: '80%' }} // Ensures the width is 80% of the viewport
+      >
         <DialogHeader>
-          <DialogTitle>Conteúdo</DialogTitle>
+          <DialogTitle>Relatório</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
           {typeof content === 'string' ? (
-            <pre className="overflow-auto whitespace-pre-wrap text-sm bg-gray-100 p-4 rounded-lg w-[445px] break-words">
+            <pre className="overflow-auto whitespace-pre-wrap text-sm bg-gray-100 p-4 rounded-lg break-words">
               {content}
             </pre>
           ) : (
